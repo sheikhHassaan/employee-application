@@ -1,5 +1,6 @@
 package model.repository;
 
+import jakarta.persistence.criteria.*;
 import model.entity.Employee;
 import model.helper.HelperUtils;
 import org.hibernate.Session;
@@ -11,6 +12,13 @@ import java.util.List;
 public class EmployeesRepository {
 
     SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+
+    public static final String DESIGNATION = "designation";
+    public static final String EXPERIENCE = "experience";
+    public static final String ASSOCIATE_SOFTWARE_ENGINEER = "ASSOCIATE_SOFTWARE_ENGINEER";
+    public static final String SOFTWARE_ENGINEER = "SOFTWARE_ENGINEER";
+    public static final String SENIOR_SOFTWARE_ENGINEER = "SENIOR_SOFTWARE_ENGINEER";
+    public static final String PRINCIPAL_SOFTWARE_ENGINEER = "PRINCIPAL_SOFTWARE_ENGINEER";
 
     /**
      * @return Returns all Employee records in employees table.
@@ -28,6 +36,43 @@ public class EmployeesRepository {
     public Employee fetchById(String id) {
         try (Session session = sessionFactory.openSession()) {
             return session.createQuery("FROM Employee e WHERE e.id = :id", Employee.class).setParameter("id", id).getSingleResult();
+        }
+    }
+
+
+    public List<Employee> fetchEmpByDeptAndMgr(String department, String managerName) {
+
+        try (Session session = sessionFactory.openSession()) {
+
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<Employee> query = cb.createQuery(Employee.class);
+            Root<Employee> root = query.from(Employee.class);
+            Join<Object, Object> reportsToJoin = root.join("reportsTo", JoinType.LEFT);
+
+            Predicate deptPredicate = cb.equal(root.get("department"), department);
+            Predicate managerPredicate = cb.equal(reportsToJoin.get("firstName"), managerName);
+
+            query.select(root).where(cb.and(deptPredicate, managerPredicate));
+            return session.createQuery(query).getResultList();
+        }
+    }
+
+
+    public List<Employee> fetchPromotionEligibleEmployees() {
+
+        try (Session session = sessionFactory.openSession()) {
+
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<Employee> query = cb.createQuery(Employee.class);
+            Root<Employee> root = query.from(Employee.class);
+
+            Predicate ase = cb.and(cb.equal(root.get(DESIGNATION), ASSOCIATE_SOFTWARE_ENGINEER), cb.gt(root.get(EXPERIENCE), 1));
+            Predicate se = cb.and(cb.equal(root.get(DESIGNATION), SOFTWARE_ENGINEER), cb.gt(root.get(EXPERIENCE), 3));
+            Predicate sse = cb.and(cb.equal(root.get(DESIGNATION), SENIOR_SOFTWARE_ENGINEER), cb.gt(root.get(EXPERIENCE), 5));
+            Predicate pse = cb.and(cb.equal(root.get(DESIGNATION), PRINCIPAL_SOFTWARE_ENGINEER), cb.gt(root.get(EXPERIENCE), 7));
+
+            query.select(root).where(cb.or(ase, se, sse, pse));
+            return session.createQuery(query).getResultList();
         }
     }
 

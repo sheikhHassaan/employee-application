@@ -26,6 +26,18 @@ public class EmployeesController {
         return Response.ok(employeesRepository.fetchById(empId)).build();
     }
 
+    @GET
+    @Path("/list")
+    public Response fetchEmployeesByDepartmentAndManager(@QueryParam("department") String department, @QueryParam("reports-to") String managerName) {
+        return Response.ok(employeesRepository.fetchEmpByDeptAndMgr(department, managerName)).build();
+    }
+
+    @GET
+    @Path("/promotion-eligible")
+    public Response fetchPromotionEligibleEmployees() {
+        return Response.ok(employeesRepository.fetchPromotionEligibleEmployees()).build();
+    }
+
     @POST
     public Response addEmployee(String employeeJson) {
 
