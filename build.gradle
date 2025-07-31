@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'war'
 }
 
 group = 'com.example'
@@ -11,25 +12,19 @@ repositories {
 
 dependencies {
 
-    // https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-core
     implementation group: 'org.hibernate.orm', name: 'hibernate-core', version: '6.5.2.Final'
 
-    // https://mvnrepository.com/artifact/org.projectlombok/lombok
-    implementation group: 'org.projectlombok', name: 'lombok', version: '1.18.30'
+    implementation 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
 
     implementation 'org.glassfish.jersey.containers:jersey-container-servlet:3.1.4'
     implementation 'org.glassfish.jersey.inject:jersey-hk2:3.1.4'
-
-    // Optional: JSON support
     implementation 'org.glassfish.jersey.media:jersey-media-json-jackson:3.1.4'
 
-    // https://mvnrepository.com/artifact/com.mysql/mysql-connector-j
-    implementation group: 'com.mysql', name: 'mysql-connector-j', version: '4.28.2'
+    implementation 'mysql:mysql-connector-java:8.0.33'
 
-    // https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation("com.google.code.gson:gson:2.10.1")
 
-    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     implementation("org.apache.commons:commons-lang3:3.18.0")
 
 }
