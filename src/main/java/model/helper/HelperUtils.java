@@ -11,14 +11,6 @@ public class HelperUtils {
         return s != null && !s.trim().isEmpty();
     }
 
-    public static boolean isNumberPositive(Double n) {
-        return n != null && n >= 0;
-    }
-
-    public static boolean isNumberPositive(Integer n) {
-        return n != null && n >= 0;
-    }
-
     public static String choose(String newVal, String oldVal) {
         return hasText(newVal) ? newVal : oldVal;
     }
