@@ -1,8 +1,8 @@
 package com.example.model.repository;
 
-import jakarta.persistence.criteria.*;
 import com.example.model.entity.Employee;
 import com.example.model.helper.HelperUtils;
+import jakarta.persistence.criteria.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -15,10 +15,10 @@ public class EmployeesRepository {
 
     public static final String DESIGNATION = "designation";
     public static final String EXPERIENCE = "experience";
-    public static final String ASSOCIATE_SOFTWARE_ENGINEER = "ASSOCIATE_SOFTWARE_ENGINEER";
-    public static final String SOFTWARE_ENGINEER = "SOFTWARE_ENGINEER";
-    public static final String SENIOR_SOFTWARE_ENGINEER = "SENIOR_SOFTWARE_ENGINEER";
-    public static final String PRINCIPAL_SOFTWARE_ENGINEER = "PRINCIPAL_SOFTWARE_ENGINEER";
+    public static final String ASSOCIATE_SOFTWARE_ENGINEER = "associate software engineer";
+    public static final String SOFTWARE_ENGINEER = "software engineer";
+    public static final String SENIOR_SOFTWARE_ENGINEER = "senior software engineer";
+    public static final String PRINCIPAL_SOFTWARE_ENGINEER = "principal software engineer";
 
     /**
      * @return Returns all Employee records in employees table.
@@ -66,10 +66,10 @@ public class EmployeesRepository {
             CriteriaQuery<Employee> query = cb.createQuery(Employee.class);
             Root<Employee> root = query.from(Employee.class);
 
-            Predicate ase = cb.and(cb.equal(root.get(DESIGNATION), ASSOCIATE_SOFTWARE_ENGINEER), cb.gt(root.get(EXPERIENCE), 1));
-            Predicate se = cb.and(cb.equal(root.get(DESIGNATION), SOFTWARE_ENGINEER), cb.gt(root.get(EXPERIENCE), 3));
-            Predicate sse = cb.and(cb.equal(root.get(DESIGNATION), SENIOR_SOFTWARE_ENGINEER), cb.gt(root.get(EXPERIENCE), 5));
-            Predicate pse = cb.and(cb.equal(root.get(DESIGNATION), PRINCIPAL_SOFTWARE_ENGINEER), cb.gt(root.get(EXPERIENCE), 7));
+            Predicate ase = cb.and(cb.equal(cb.lower(root.get(DESIGNATION)), ASSOCIATE_SOFTWARE_ENGINEER), cb.gt(root.get(EXPERIENCE), 1));
+            Predicate se = cb.and(cb.equal(cb.lower(root.get(DESIGNATION)), SOFTWARE_ENGINEER), cb.gt(root.get(EXPERIENCE), 3));
+            Predicate sse = cb.and(cb.equal(cb.lower(root.get(DESIGNATION)), SENIOR_SOFTWARE_ENGINEER), cb.gt(root.get(EXPERIENCE), 5));
+            Predicate pse = cb.and(cb.equal(cb.lower(root.get(DESIGNATION)), PRINCIPAL_SOFTWARE_ENGINEER), cb.gt(root.get(EXPERIENCE), 7));
 
             query.select(root).where(cb.or(ase, se, sse, pse));
             return session.createQuery(query).getResultList();
@@ -78,33 +78,59 @@ public class EmployeesRepository {
 
     /**
      * This method inserts the record if it doesn't exist already, otherwise updates the existing record.
+     *
      * @param newRecord to be inserted or updated.
      */
-    public void upsert(Employee newRecord) {
+    public void upsertDelta(Employee newRecord) {
 
         try (Session session = sessionFactory.openSession()) {
             Transaction tx = session.beginTransaction();
 
             Employee existingRecord = session.get(Employee.class, newRecord.getId());
             if (existingRecord == null) {
-                // insert case
+                // Insert case
                 existingRecord = new Employee();
                 existingRecord.setId(newRecord.getId());
+                existingRecord.setFirstName(newRecord.getFirstName());
+                existingRecord.setLastName(newRecord.getLastName());
+                existingRecord.setAddress(newRecord.getAddress());
+                existingRecord.setEmail(newRecord.getEmail());
+                existingRecord.setPhoneNumber(newRecord.getPhoneNumber());
+                existingRecord.setDepartment(newRecord.getDepartment());
+                existingRecord.setDesignation(newRecord.getDesignation());
+                existingRecord.setReportsTo(newRecord.getReportsTo());
+                existingRecord.setSalary(newRecord.getSalary());
+                existingRecord.setExperience(newRecord.getExperience());
+
                 session.persist(existingRecord);
+            } else {
+                // Update case
+                existingRecord.setFirstName(HelperUtils.choose(newRecord.getFirstName(), existingRecord.getFirstName()));
+                existingRecord.setLastName(HelperUtils.choose(newRecord.getLastName(), existingRecord.getLastName()));
+                existingRecord.setAddress(HelperUtils.choose(newRecord.getAddress(), existingRecord.getAddress()));
+                existingRecord.setEmail(HelperUtils.choose(newRecord.getEmail(), existingRecord.getEmail()));
+                existingRecord.setPhoneNumber(HelperUtils.choose(newRecord.getPhoneNumber(), existingRecord.getPhoneNumber()));
+                existingRecord.setDepartment(HelperUtils.choose(newRecord.getDepartment(), existingRecord.getDepartment()));
+                existingRecord.setDesignation(HelperUtils.choose(newRecord.getDesignation(), existingRecord.getDesignation()));
+                existingRecord.setReportsTo((newRecord.getReportsTo() == null) ? existingRecord.getReportsTo() : newRecord.getReportsTo());
+                existingRecord.setSalary(HelperUtils.choose(newRecord.getSalary(), existingRecord.getSalary()));
+                existingRecord.setExperience(HelperUtils.choose(newRecord.getExperience(), existingRecord.getExperience()));
             }
 
-            existingRecord.setFirstName(HelperUtils.choose(newRecord.getFirstName(), existingRecord.getFirstName()));
-            existingRecord.setLastName(HelperUtils.choose(newRecord.getLastName(), existingRecord.getLastName()));
-            existingRecord.setAddress(HelperUtils.choose(newRecord.getAddress(), existingRecord.getAddress()));
-            existingRecord.setEmail(HelperUtils.choose(newRecord.getEmail(), existingRecord.getEmail()));
-            existingRecord.setPhoneNumber(HelperUtils.choose(newRecord.getPhoneNumber(), existingRecord.getPhoneNumber()));
-            existingRecord.setDepartment(HelperUtils.choose(newRecord.getDepartment(), existingRecord.getDepartment()));
-            existingRecord.setDesignation(HelperUtils.choose(newRecord.getDesignation(), existingRecord.getDesignation()));
+            tx.commit();
+        }
+    }
 
-            existingRecord.setReportsTo((newRecord.getReportsTo() == null) ? existingRecord.getReportsTo() : newRecord.getReportsTo());
-            existingRecord.setSalary(HelperUtils.choose(newRecord.getSalary(), existingRecord.getSalary()));
-            existingRecord.setExperience(HelperUtils.choose(newRecord.getExperience(), existingRecord.getExperience()));
+    /**
+     * Merges the new Employee object without any delta.
+     *
+     * @param newEmployee object to be updated.
+     */
+    public void upsert(Employee newEmployee) {
 
+        try (Session session = sessionFactory.openSession()) {
+            Transaction tx = session.beginTransaction();
+            session.merge(newEmployee);
             tx.commit();
         }
     }

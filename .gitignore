@@ -50,3 +50,11 @@ bin/
 /.smarttomcat/employee-application/conf/tomcat-users.xml
 /.smarttomcat/employee-application/conf/tomcat-users.xsd
 /.smarttomcat/employee-application/conf/web.xml
+/.smarttomcat/employee-application.main/conf/catalina.properties
+/.smarttomcat/employee-application.main/conf/context.xml
+/.smarttomcat/employee-application.main/conf/jaspic-providers.xml
+/.smarttomcat/employee-application.main/conf/jaspic-providers.xsd
+/.smarttomcat/employee-application.main/conf/logging.properties
+/.smarttomcat/employee-application.main/conf/server.xml
+/.smarttomcat/employee-application.main/conf/tomcat-users.xsd
+/.smarttomcat/employee-application.main/conf/web.xml
