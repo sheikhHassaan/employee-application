@@ -1,4 +1,4 @@
-package model.entity;
+package com.example.model.entity;
 
 import com.google.gson.annotations.SerializedName;
 import jakarta.persistence.*;
@@ -10,7 +10,7 @@ import lombok.Data;
 public class Employee {
 
     @Id
-    @Column(name = "id")
+    @Column(name = "id", columnDefinition = "CHAR(36)")
     @SerializedName("id")
     private String id;
 

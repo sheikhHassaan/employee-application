@@ -1,8 +1,8 @@
-package model.repository;
+package com.example.model.repository;
 
 import jakarta.persistence.criteria.*;
-import model.entity.Employee;
-import model.helper.HelperUtils;
+import com.example.model.entity.Employee;
+import com.example.model.helper.HelperUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;

@@ -1,4 +1,4 @@
-package model.helper;
+package com.example.model.helper;
 
 import java.util.UUID;
 

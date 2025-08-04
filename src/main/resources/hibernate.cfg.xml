@@ -16,6 +16,6 @@
         <property name="hibernate.show_sql">true</property>
 
         <!-- Register annotated entity -->
-        <mapping class="model.entity.Employee"/>
+        <mapping class="com.example.model.entity.Employee"/>
     </session-factory>
 </hibernate-configuration>

@@ -27,6 +27,16 @@ dependencies {
 
     implementation("org.apache.commons:commons-lang3:3.18.0")
 
+    // https://mvnrepository.com/artifact/org.apache.struts/struts2-core
+    implementation 'org.apache.struts:struts2-core:7.0.3'
+
+    // https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api
+    compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+
+}
+
+war {
+    archiveFileName = 'employee-application.war'
 }
 
 test {

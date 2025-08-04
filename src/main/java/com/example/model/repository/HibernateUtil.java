@@ -1,4 +1,4 @@
-package model.repository;
+package com.example.model.repository;
 
 import org.hibernate.SessionException;
 import org.hibernate.SessionFactory;

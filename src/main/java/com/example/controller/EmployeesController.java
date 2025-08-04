@@ -1,15 +1,15 @@
-package controller;
+package com.example.controller;
 
 import com.google.gson.Gson;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
-import model.entity.Employee;
-import model.helper.HelperUtils;
-import model.repository.EmployeesRepository;
+import com.example.model.entity.Employee;
+import com.example.model.helper.HelperUtils;
+import com.example.model.repository.EmployeesRepository;
 
 import java.util.UUID;
 
-@Path("/employee")
+@Path("employee")
 public class EmployeesController {
 
     EmployeesRepository employeesRepository = new EmployeesRepository();
@@ -27,7 +27,7 @@ public class EmployeesController {
     }
 
     @GET
-    @Path("/list")
+    @Path("/constraint")
     public Response fetchEmployeesByDepartmentAndManager(@QueryParam("department") String department, @QueryParam("reports-to") String managerName) {
         return Response.ok(employeesRepository.fetchEmpByDeptAndMgr(department, managerName)).build();
     }
