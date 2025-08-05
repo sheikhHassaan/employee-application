@@ -4,6 +4,7 @@ import com.example.model.entity.Employee;
 import com.example.model.helper.HelperUtils;
 import jakarta.persistence.criteria.*;
 import org.hibernate.Session;
+import org.hibernate.SessionException;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
@@ -30,6 +31,16 @@ public class EmployeesRepository {
     }
 
     /**
+     * This method returns all employees sorted by their first_name in ascending order.
+     * @return List<Employee> sorted by firstname
+     */
+    public List<Employee> fetchAllSorted() {
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery("FROM Employee e ORDER BY e.firstName ASC", Employee.class).list();
+        }
+    }
+
+    /**
      * @param id Primary key
      * @return Employee record with relevant id.
      */
@@ -39,7 +50,11 @@ public class EmployeesRepository {
         }
     }
 
-
+    /**
+     * @param department  String -> department_name
+     * @param managerName String -> firstname of reports_to entity
+     * @return List<Employees> filtered by constraints
+     */
     public List<Employee> fetchEmpByDeptAndMgr(String department, String managerName) {
 
         try (Session session = sessionFactory.openSession()) {
@@ -57,7 +72,9 @@ public class EmployeesRepository {
         }
     }
 
-
+    /**
+     * @return All promotion eligible employees on a certain hardcoded criteria.
+     */
     public List<Employee> fetchPromotionEligibleEmployees() {
 
         try (Session session = sessionFactory.openSession()) {
@@ -78,7 +95,6 @@ public class EmployeesRepository {
 
     /**
      * This method inserts the record if it doesn't exist already, otherwise updates the existing record.
-     *
      * @param newRecord to be inserted or updated.
      */
     public void upsertDelta(Employee newRecord) {
@@ -123,7 +139,6 @@ public class EmployeesRepository {
 
     /**
      * Merges the new Employee object without any delta.
-     *
      * @param newEmployee object to be updated.
      */
     public void upsert(Employee newEmployee) {
@@ -132,6 +147,26 @@ public class EmployeesRepository {
             Transaction tx = session.beginTransaction();
             session.merge(newEmployee);
             tx.commit();
+        }
+    }
+
+    /**
+     * This method fetches all the resources that report to Manager having employeeId empId
+     * @param empId Employee ID of the manager
+     * @return Subordinates of the manager.
+     */
+    public void removeIfManager(String empId) {
+        Transaction tx = null;
+        try (Session session = sessionFactory.openSession()) {
+            tx = session.beginTransaction();
+            List<Employee> subordinates = session.createQuery("FROM Employee e WHERE e.reportsTo.id = :empId", Employee.class)
+                    .setParameter("empId", empId)
+                    .list();
+            subordinates.forEach(s -> s.setReportsTo(null));
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            throw new SessionException("Failed to fetch subordinates", e);
         }
     }
 
@@ -145,6 +180,7 @@ public class EmployeesRepository {
 
             Employee employee = session.get(Employee.class, id);
             if (employee != null) {
+                removeIfManager(employee.getId());
                 session.remove(employee);
             }
             tx.commit();

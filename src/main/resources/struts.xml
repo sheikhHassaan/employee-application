@@ -1,0 +1,33 @@
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN" "http://struts.apache.org/dtds/struts-2.5.dtd">
+
+<struts>
+    <package name="default" namespace="/" extends="struts-default">
+
+        <!-- List Employees -->
+        <action name="listEmployees" class="com.example.action.EmployeeAction" method="list">
+            <result name="SUCCESS">/WEB-INF/jsp/listEmployees.jsp</result>
+        </action>
+
+        <!-- Add Employee -->
+        <action name="addEmployee" class="com.example.action.EmployeeAction" method="add">
+            <result name="SUCCESS" type="redirectAction">listEmployees</result>
+            <result name="INPUT">/WEB-INF/jsp/addEmployee.jsp</result>
+        </action>
+
+        <!-- Edit Employee -->
+        <action name="editEmployee" class="com.example.action.EmployeeAction" method="edit">
+            <result name="SUCCESS">/WEB-INF/jsp/editEmployee.jsp</result>
+        </action>
+
+        <!-- Update Employee -->
+        <action name="updateEmployee" class="com.example.action.EmployeeAction" method="update">
+            <result name="SUCCESS" type="redirectAction">listEmployees</result>
+        </action>
+
+        <!-- Delete Employee -->
+        <action name="deleteEmployee" class="com.example.action.EmployeeAction" method="delete">
+            <result name="SUCCESS" type="redirectAction">listEmployees</result>
+        </action>
+
+    </package>
+</struts>
