@@ -2,6 +2,8 @@ package com.example.action;
 
 import com.example.model.entity.Employee;
 import com.example.model.repository.EmployeesRepository;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.ActionSupport;
 import org.apache.struts2.interceptor.parameter.StrutsParameter;
@@ -12,16 +14,22 @@ import java.util.UUID;
 
 public class EmployeeAction extends ActionSupport {
 
-    private List<Employee> employees;
-    private List<Employee> managers;
-    private Employee employee;
-    private Employee manager;
+    @Setter
+    private transient List<Employee> employees;
+    @Setter
+    private transient List<Employee> managers;
+    @Setter
+    private transient Employee employee;
+    @Setter
+    private transient Employee manager;
+    @Getter
     private String managerId;
+    @Getter
     private String id;
 
     public static final String SUCCESS = "SUCCESS";
 
-    EmployeesRepository employeesRepository = new EmployeesRepository();
+    transient EmployeesRepository employeesRepository = new EmployeesRepository();
 
     public String list() {
         this.employees = employeesRepository.fetchAll();
@@ -74,17 +82,9 @@ public class EmployeeAction extends ActionSupport {
         return employees;
     }
 
-    public void setEmployees(List<Employee> employees) {
-        this.employees = employees;
-    }
-
     @StrutsParameter(depth = 1)
     public List<Employee> getManagers() {
         return managers;
-    }
-
-    public void setManagers(List<Employee> managers) {
-        this.managers = managers;
     }
 
     @StrutsParameter(depth = 1)
@@ -92,30 +92,14 @@ public class EmployeeAction extends ActionSupport {
         return employee;
     }
 
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
-
-    public String getManagerId() {
-        return managerId;
-    }
-
     @StrutsParameter(depth = 1)
     public Employee getManager() {
         return manager;
     }
 
-    public void setManager(Employee manager) {
-        this.manager = manager;
-    }
-
     @StrutsParameter(depth = 0)
     public void setManagerId(String managerId) {
         this.managerId = managerId;
-    }
-
-    public String getId() {
-        return id;
     }
 
     @StrutsParameter(depth = 0)
