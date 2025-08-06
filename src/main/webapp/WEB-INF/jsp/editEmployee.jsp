@@ -1,91 +1,33 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
-<!DOCTYPE html>
-<html lang="en-US">
-<head>
-    <title>Edit Employee</title>
-</head>
-<style>
-    form {
-            width: 400px;
-            margin: 20px auto;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background: #f9f9f9;
-        }
-        label {
-            display: block;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-        input, select {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .btn {
-            margin-top: 15px;
-            padding: 10px;
-            width: 48%;
-            border: none;
-            cursor: pointer;
-            color: white;
-            border-radius: 4px;
-        }
-        .btn-save {
-            background-color: #4CAF50;
-        }
-        .btn-cancel {
-            background-color: #f44336;
-        }
-</style>
-<body>
-    <h2 style="text-align:center;">Edit Employee</h2>
-    <s:form action="updateEmployee" method="post">
-        <s:hidden name="id" value="%{employee.id}"/>
+    <!DOCTYPE html>
+    <html lang="en-US">
 
-        <label>First Name:</label>
-        <s:textfield name="firstName" value="%{employee.firstName}" />
+    <head>
+        <title>Edit Employee</title>
+    </head>
 
-        <label>Last Name:</label>
-        <s:textfield name="lastName" value="%{employee.lastName}" />
+    <body>
+        <h2>Edit Employee</h2>
 
-        <label>Address:</label>
-        <s:textfield name="address" value="%{employee.address}" />
+        <s:form action="updateEmployee" method="post">
 
-        <label>Email:</label>
-        <s:textfield name="email" value="%{employee.email}" />
+            <s:select name="managerId" list="managers" listKey="id" listValue="firstName + ' ' + lastName"
+                            label="Reports To" />
 
-        <label>Phone Number:</label>
-        <s:textfield name="phoneNumber" value="%{employee.phoneNumber}" />
+            <s:hidden name="employee.id" />
+            <s:textfield name="employee.firstName" label="First Name" />
+            <s:textfield name="employee.lastName" label="Last Name" />
+            <s:textfield name="employee.address" label="Address" />
+            <s:textfield name="employee.email" label="Email" />
+            <s:textfield name="employee.phoneNumber" label="Phone Number" />
+            <s:textfield name="employee.department" label="Department" />
+            <s:textfield name="employee.designation" label="Designation" />
+            <s:textfield name="employee.salary" label="Salary" />
+            <s:textfield name="employee.experience" label="Experience" />
 
-        <label>Department:</label>
-        <s:textfield name="department" value="%{employee.department}" />
+            <s:submit value="Update Employee" />
+            <s:a action="listEmployees">Cancel</s:a>
+        </s:form>
+    </body>
 
-        <label>Designation:</label>
-        <s:textfield name="designation" value="%{employee.designation}" />
-
-        <label>Reports To:</label>
-        <s:select
-            name="reportsTo"
-            list="managers"
-            listKey="id"
-            listValue="firstName + ' ' + lastName"
-            value="%{employee.reportsTo != null ? employee.reportsTo.id : ''}" />
-
-         <label>Salary:</label>
-        <s:textfield name="salary" value="%{employee.salary}" />
-
-        <label>Experience:</label>
-        <s:textfield name="experience" value="%{employee.experience}" />
-
-        <div style="display:flex; justify-content:space-between;">
-            <input type="submit" value="Save" class="btn btn-save" />
-            <a href="listEmployees" class="btn btn-cancel" style="text-align:center; line-height:30px;">Cancel</a>
-        </div>
-
-    </s:form>
-</body>
-</html>
+    </html>

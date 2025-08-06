@@ -32,6 +32,7 @@ public class EmployeesRepository {
 
     /**
      * This method returns all employees sorted by their first_name in ascending order.
+     *
      * @return List<Employee> sorted by firstname
      */
     public List<Employee> fetchAllSorted() {
@@ -95,6 +96,7 @@ public class EmployeesRepository {
 
     /**
      * This method inserts the record if it doesn't exist already, otherwise updates the existing record.
+     *
      * @param newRecord to be inserted or updated.
      */
     public void upsertDelta(Employee newRecord) {
@@ -139,6 +141,7 @@ public class EmployeesRepository {
 
     /**
      * Merges the new Employee object without any delta.
+     *
      * @param newEmployee object to be updated.
      */
     public void upsert(Employee newEmployee) {
@@ -152,6 +155,7 @@ public class EmployeesRepository {
 
     /**
      * This method fetches all the resources that report to Manager having employeeId empId
+     *
      * @param empId Employee ID of the manager
      * @return Subordinates of the manager.
      */
